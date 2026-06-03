@@ -1,5 +1,7 @@
 # ESP-IDF ByteRider
 
+***Note:* This Repository is not finished at the moment.**
+
 I'm rewriting the ByteRider robot projects from the original Arduino code over to native **ESP-IDF** to push my coding skills and learn how FreeRTOS and low-level drivers actually work.
 
 ## Project Origin & Credits
