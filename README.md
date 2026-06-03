@@ -23,3 +23,10 @@ Configurations and drivers for the ByteRider.
 * [br_servo_driver](./components/br_servo_driver/README.md) - Driver for the servo motor.
 
 ## Projects
+The example projects from the [original ByteRider Arduino repository](https://github.com/Florian-Hagemann/ByteRider) rewritten for ESP-IDF.
+* [01_blink](./projects/01_blink/README.md) - Blink the LEDs
+* [02_running_lights](./projects/02_running_lights/README.md) - Stoppable running lights animation.
+* [03_distance_sensor](./projects/03_distance_sensor/README.md) - Show distance with LEDs.
+* [04_motors](./projects/04_motors/README.md) - Let the ByteRider drive.
+* [05_wifi_connectivity](./projects/05_wifi_connectivity/README.md) - Host an Access Point.
+* [06_captive_portal](./projects/06_captive_portal/README.md) - Host a captive portal with which you can control the ByteRider.
