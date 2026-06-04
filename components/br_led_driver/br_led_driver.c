@@ -5,10 +5,23 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/queue.h"
+
 #include "esp_log.h"
+
+typedef enum {
+    CMD_SET_PATTERN,
+    CMD_SET_D11
+} br_led_driver_command_type_t;
+
+typedef struct {
+    br_led_driver_command_type_t type;
+    uint16_t value;
+} br_led_driver_command_t;
 
 static const char* TAG = "br_led_driver"; // Tag for logs
 static TaskHandle_t br_led_driver_task_handle = NULL; // Task handle for driver task
+static QueueHandle_t br_led_driver_queue_handle = NULL; // Queue handle for passing data to the driver
 
 // Driver task
 static void br_led_driver_task(void *pvArguments) {
@@ -21,7 +34,21 @@ static void br_led_driver_task(void *pvArguments) {
 
 // Create driver task
 void br_led_driver_init(void) {
+
+    if(br_led_driver_task_handle != NULL) {
+        ESP_LOGW(TAG, "Driver already initialized! Skipping Task creation...");
+        return;
+    }
+
     ESP_LOGD(TAG, "Creating br_led_driver task...");
+    
+    br_led_driver_queue_handle = xQueueCreate(3, sizeof(br_led_driver_command_t));
+
+    if(br_led_driver_queue_handle == NULL) {
+        ESP_LOGE(TAG, "Failed to create queue! Out of memory. Aborting Task creation...");
+        return;
+    }
+    
     xTaskCreate(
         br_led_driver_task,
         "br_led_driver_task",
@@ -33,13 +60,69 @@ void br_led_driver_init(void) {
 }
 
 // Start driver task (if stopped)
-void br_led_driver_start(void); 
+void br_led_driver_start(void) {
+
+    if(br_led_driver_task_handle == NULL) {
+        ESP_LOGW(TAG, "Cannot start: Task does not exist. Call br_led_driver_init() first!");
+        return;
+    }
+
+    vTaskResume(br_led_driver_task_handle);
+    ESP_LOGD(TAG, "Task resumed.");
+
+}
 
 // Stop driver task
-void br_led_driver_stop(void);
+void br_led_driver_stop(void) {
+
+    if(br_led_driver_task_handle == NULL) {
+        ESP_LOGW(TAG, "Cannot stop: Task does not exist. Call br_led_driver_init() first!");
+        return;
+    }
+
+    vTaskSuspend(br_led_driver_task_handle);
+    ESP_LOGD(TAG, "Task suspended.");
+
+}
 
 // Kill driver task
-void br_led_driver_kill(void);  
+void br_led_driver_kill(void) {
+    if(br_led_driver_task_handle != NULL) {
+        vTaskDelete(br_led_driver_task_handle);
+        vQueueDelete(br_led_driver_queue_handle);
+        br_led_driver_task_handle = NULL;
+        br_led_driver_queue_handle = NULL;
+        ESP_LOGD(TAG, "Killed Task.");
+    } else {
+        ESP_LOGW(TAG, "Cannot kill: Task does not exist. Call br_led_driver_init() first!");
+    }
+}
 
-void br_led_driver_set_pattern(uint16_t pattern);   
-void br_led_driver_set_d11(bool state);             
+// Sends a pattern to the queue to be send to the shift register
+void br_led_driver_set_pattern(uint16_t pattern) {
+
+    if(br_led_driver_queue_handle == NULL) {
+        ESP_LOGE(TAG, "Could not set pattern: Task/Queue does not exist!");
+        return;
+    }
+    
+    ESP_LOGV(TAG, "New Pattern set: " LOG_UINT16_TO_BINARY_FMT, LOG_UINT16_TO_BINARY_ARG(pattern));
+    br_led_driver_command_t cmd = { .type = CMD_SET_PATTERN, .value = pattern };
+
+    xQueueSend(br_led_driver_queue_handle, &cmd, 0);
+
+} 
+
+void br_led_driver_set_d11(bool state) {
+
+    if(br_led_driver_queue_handle == NULL) {
+        ESP_LOGE(TAG, "Could not set D11: Task/Queue does not exist!");
+        return;
+    }
+    
+    ESP_LOGV(TAG, "Set D11 to %d", state);
+    br_led_driver_command_t cmd = { .type = CMD_SET_D11, .value = state };
+
+    xQueueSend(br_led_driver_queue_handle, &cmd, 0);
+
+} 
