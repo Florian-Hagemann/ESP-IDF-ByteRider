@@ -29,19 +29,25 @@ static QueueHandle_t br_led_driver_queue_handle = NULL; // Queue handle for pass
 
 // GPIO logic for writing to the shift register
 static void internal_write_pattern(uint16_t pattern) {
-    // TODO: add gpio logic
+    
+    gpio_set_level(BR_PIN_SRCLK, 0);
+
+    for(int i = 0; i < 16; i++) {
+
+        gpio_set_level(BR_PIN_RCLK, 0);
+        gpio_set_level(BR_PIN_SER, ((pattern >> i) & 1));
+        gpio_set_level(BR_PIN_RCLK, 1);
+
+    }
+
+    gpio_set_level(BR_PIN_SRCLK, 1);
+
 }
 
 // GPIO logic for writing state to D11
 static void internal_write_d11(bool state) {
     
-    if(state != 0 and state != 1) {
-        ESP_LOGE(TAG, "Cannot write to D11: State must be 0 or 1.")
-        return;
-    }
-    
     gpio_set_level(BR_PIN_LED, state);
-    ESP_LOGV(TAG, "Set D11 to %d", state);
 
 }
 
@@ -101,7 +107,7 @@ static void internal_initialize_pins(void) {
     gpio_config(&io_conf);
     internal_write_pattern(0x0000);
 
-    ESP_LOGD(TAG, "Initialised all needed GPIO pins.")
+    ESP_LOGD(TAG, "Initialised all needed GPIO pins.");
 
 }
 
@@ -115,14 +121,15 @@ void br_led_driver_init(void) {
 
     ESP_LOGD(TAG, "Creating br_led_driver task...");
 
-    internal_initialize_pins();
     
     br_led_driver_queue_handle = xQueueCreate(3, sizeof(br_led_driver_command_t));
-
+    
     if(br_led_driver_queue_handle == NULL) {
         ESP_LOGE(TAG, "Failed to create queue! Out of memory. Aborting Task creation...");
         return;
     }
+    
+    internal_initialize_pins();
     
     xTaskCreate(
         br_led_driver_task,
