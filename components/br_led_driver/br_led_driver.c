@@ -34,7 +34,15 @@ static void internal_write_pattern(uint16_t pattern) {
 
 // GPIO logic for writing state to D11
 static void internal_write_d11(bool state) {
-    // TODO: add gpio logic
+    
+    if(state != 0 and state != 1) {
+        ESP_LOGE(TAG, "Cannot write to D11: State must be 0 or 1.")
+        return;
+    }
+    
+    gpio_set_level(BR_PIN_LED, state);
+    ESP_LOGV(TAG, "Set D11 to %d", state);
+
 }
 
 // Driver task
