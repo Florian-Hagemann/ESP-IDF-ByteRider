@@ -23,11 +23,39 @@ static const char* TAG = "br_led_driver"; // Tag for logs
 static TaskHandle_t br_led_driver_task_handle = NULL; // Task handle for driver task
 static QueueHandle_t br_led_driver_queue_handle = NULL; // Queue handle for passing data to the driver
 
+static void internal_write_pattern(uint16_t pattern) {
+    // TODO: add gpio logic
+}
+
+static void internal_write_d11(bool state) {
+    // TODO: add gpio logic
+}
+
 // Driver task
 static void br_led_driver_task(void *pvArguments) {
     ESP_LOGD(TAG, "Successfully created br_led_driver task.");
     
+    br_led_driver_command_t recieved_cmd;
+
     while(1) {
+
+        if(xQueueReceive(br_led_driver_queue_handle, &recieved_cmd, portMAX_DELAY) == pdTRUE) {
+
+            switch(recieved_cmd.type) {
+
+                case CMD_SET_PATTERN:
+                    internal_write_pattern(recieved_cmd.value);
+                    break;
+                case CMD_SET_D11:
+                    internal_write_d11((bool)recieved_cmd.value);
+                    break;
+                default:
+                    ESP_LOGE(TAG, "Received unknown command type!");
+                    break;
+
+            }
+
+        }
 
     }
 }
@@ -113,6 +141,7 @@ void br_led_driver_set_pattern(uint16_t pattern) {
 
 } 
 
+// Sends D11 state to driver queue to turn it off/on
 void br_led_driver_set_d11(bool state) {
 
     if(br_led_driver_queue_handle == NULL) {
