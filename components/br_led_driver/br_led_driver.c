@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "br_led_driver.h"
+#include "br_board_config.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -8,6 +9,7 @@
 #include "freertos/queue.h"
 
 #include "esp_log.h"
+#include "driver/gpio.h"
 
 // Command types for queue
 typedef enum {
@@ -64,6 +66,37 @@ static void br_led_driver_task(void *pvArguments) {
     }
 }
 
+static void internal_initialize_pins(void) {
+
+    // Set pin levels
+    gpio_set_level(BR_PIN_SER, 0);
+    gpio_set_level(BR_PIN_SRCLK, 0);
+    gpio_set_level(BR_PIN_RCLK, 0);
+    gpio_set_level(BR_PIN_SRCLR, 1); // SRCLR is active low
+    gpio_set_level(BR_PIN_LED, 0);
+
+    // pin mask
+    uint64_t pin_mask = (1ULL << BR_PIN_SER)    | 
+                        (1ULL << BR_PIN_SRCLK)  | 
+                        (1ULL << BR_PIN_RCLK)   | 
+                        (1ULL << BR_PIN_SRCLR)  | 
+                        (1ULL << BR_PIN_LED);
+    gpio_config_t io_conf = {
+        .pin_bit_mask = pin_mask,
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE
+    };
+
+    // Set config
+    gpio_config(&io_conf);
+    internal_write_pattern(0x0000);
+
+    ESP_LOGD(TAG, "Initialised all needed GPIO pins.")
+
+}
+
 // Create driver task
 void br_led_driver_init(void) {
 
@@ -73,6 +106,8 @@ void br_led_driver_init(void) {
     }
 
     ESP_LOGD(TAG, "Creating br_led_driver task...");
+
+    internal_initialize_pins();
     
     br_led_driver_queue_handle = xQueueCreate(3, sizeof(br_led_driver_command_t));
 
@@ -89,6 +124,7 @@ void br_led_driver_init(void) {
         1,
         &br_led_driver_task_handle
     );
+
 }
 
 // Start driver task (if stopped)
