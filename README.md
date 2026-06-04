@@ -4,6 +4,24 @@
 
 I'm rewriting the ByteRider robot projects from the original Arduino code over to native **ESP-IDF** to push my coding skills and learn how FreeRTOS and low-level drivers actually work.
 
+## How to use
+**1. Clone the repository:**
+   ```bash
+   git clone https://github.com/Florian-Hagemann/ESP-IDF-ByteRider.git
+   cd ESP-IDF-ByteRider
+   ```
+**2. Pick a project**
+
+**3. Set idf target**
+```bash
+idf.py set-target esp32c3
+```
+
+**4. Flash, monitor, and enjoy!**
+```bash
+idf.py flash monitor
+```
+
 ## Project Origin & Credits
 The **ByteRider** hardware platform was originally designed by Nils Kohl and Lasse Schulze during their FWJ at the **IMS (Institut für Mikroelektronische Systeme)** at Leibniz Universität Hannover as an intern project. 
 
@@ -24,7 +42,7 @@ Configurations and drivers for the ByteRider.
 * [br_motor_driver](./components/br_motor_driver/README.md) - DC motor control (L298N H-Bridge).
 * [br_servo_driver](./components/br_servo_driver/README.md) - Driver for the servo motor.
 
-## Projects
+### Projects
 The example projects from the [original ByteRider Arduino repository](https://github.com/Florian-Hagemann/ByteRider) rewritten for ESP-IDF.
 * [01_blink](./projects/01_blink/README.md) - Blink the LEDs
 * [02_running_lights](./projects/02_running_lights/README.md) - Stoppable running lights animation.
