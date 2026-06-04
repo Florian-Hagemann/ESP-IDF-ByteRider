@@ -1,3 +1,4 @@
+[Main Overview](../../README.md)
 # ByteRider Board Configuration (Board REV: 2.0)
 
 A component that defines every pin in a central place. All pins have the ESP_IDF native ```gpio_num_t``` data type.
