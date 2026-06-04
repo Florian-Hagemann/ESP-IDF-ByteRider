@@ -9,11 +9,13 @@
 
 #include "esp_log.h"
 
+// Command types for queue
 typedef enum {
     CMD_SET_PATTERN,
     CMD_SET_D11
 } br_led_driver_command_type_t;
 
+// Command struct for queue
 typedef struct {
     br_led_driver_command_type_t type;
     uint16_t value;
@@ -23,10 +25,12 @@ static const char* TAG = "br_led_driver"; // Tag for logs
 static TaskHandle_t br_led_driver_task_handle = NULL; // Task handle for driver task
 static QueueHandle_t br_led_driver_queue_handle = NULL; // Queue handle for passing data to the driver
 
+// GPIO logic for writing to the shift register
 static void internal_write_pattern(uint16_t pattern) {
     // TODO: add gpio logic
 }
 
+// GPIO logic for writing state to D11
 static void internal_write_d11(bool state) {
     // TODO: add gpio logic
 }
