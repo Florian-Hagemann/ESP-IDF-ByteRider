@@ -189,7 +189,6 @@ void br_led_driver_set_pattern(uint16_t pattern) {
         return;
     }
     
-    ESP_LOGV(TAG, "New Pattern set: " LOG_UINT16_TO_BINARY_FMT, LOG_UINT16_TO_BINARY_ARG(pattern));
     br_led_driver_command_t cmd = { .type = CMD_SET_PATTERN, .value = pattern };
 
     xQueueSend(br_led_driver_queue_handle, &cmd, 0);
