@@ -23,7 +23,7 @@ idf.py flash monitor
 ```
 
 ## Project Origin & Credits
-The **ByteRider** hardware platform was originally designed by Nils Kohl and Lasse Schulze during their FWJ at the **IMS (Institut für Mikroelektronische Systeme)** at Leibniz Universität Hannover as an intern project. 
+The **ByteRider** hardware platform was originally designed by [Nils Kohl and Lasse Schulze during their FWJ at the **IMS (Institut für Mikroelektronische Systeme)**](https://www.ims.uni-hannover.de/fileadmin/ims/studium/FWJ/2024_Kohl_Schulze_FWJ-Poster.pdf) at Leibniz Universität Hannover as an intern project. 
 
 * **Original Arduino Repository:** [Florian-Hagemann/ByteRider](https://github.com/Florian-Hagemann/ByteRider)
 
