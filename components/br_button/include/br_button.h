@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 // Structs for button config
 typedef void (*button_callback_t)(void *args);
 

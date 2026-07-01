@@ -12,18 +12,25 @@
 static const char* TAG = "br_button";
 static QueueHandle_t br_button_queue_handle = NULL;
 
+static uint32_t last_interrupt_time = 0;
+
 static void IRAM_ATTR isr_func(void *arg) {
 
-    QueueHandle_t queue = (QueueHandle_t) arg;
-    uint32_t dummy = 1;
-    xQueueSendFromISR(queue, &dummy, NULL);
+    uint32_t interrupt_time = xTaskGetTickCountFromISR();
+
+    if(interrupt_time - last_interrupt_time > pdMS_TO_TICKS(200)){
+        last_interrupt_time = interrupt_time;
+        QueueHandle_t queue = (QueueHandle_t) arg;
+        uint32_t dummy = 1;
+        xQueueSendFromISR(queue, &dummy, NULL);
+    }
 
 }
 
 static void button_handler_task(void *pvArguments) {
 
     uint32_t dummy;
-    button_config_t *config = (button_config *)pvArguments;
+    button_config_t *config = (button_config_t *)pvArguments;
 
     if(config->onpress == NULL) {
 

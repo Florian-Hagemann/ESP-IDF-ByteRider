@@ -8,7 +8,7 @@
 volatile bool running = true;
 uint16_t pattern = 0x0001;
 
-void pause_start_lights() {
+void pause_start_lights(void *args) {
     running = !running;
 }
 
@@ -36,7 +36,7 @@ void app_main(void) {
 
     button_config_t config = {
         .onpress = pause_start_lights,
-        .callback_args = NULL
+        .callback_args = NULL,
     };
 
     br_button_setup(&config);
