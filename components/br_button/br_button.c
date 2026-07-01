@@ -11,8 +11,10 @@
 
 static const char* TAG = "br_button";
 
+
+
 void br_button_setup(button_config_t *button_config) {
     ESP_LOGD(TAG, "Setting up button...");
     // TODO: Setup ISR
-    // TODO: Setup Button handler to debounce and run the onpress func
+    // TODO: Setup Button handler to run the onpress func
 }
