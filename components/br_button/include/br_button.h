@@ -1,12 +1,9 @@
 #pragma once
 
-#include <stdint.h>
-
 // Structs for button config
 typedef void (*button_callback_t)(void *args);
 
 typedef struct {
-    uint32_t debounce_ms;
     button_callback_t onpress;
     void *callback_args;
 } button_config_t;
