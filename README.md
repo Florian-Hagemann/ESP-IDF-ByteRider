@@ -1,5 +1,13 @@
 # ESP-IDF ByteRider
 
+<p align="left">
+  <img src="https://img.shields.io/github/last-commit/Florian-Hagemann/ESP-IDF-ByteRider?color=4ab0a5" alt="Last Commit">
+  <img src="https://img.shields.io/badge/Target-ESP32--C3-E7352C?logo=espressif&logoColor=white" alt="Target Chip">
+  <img src="https://img.shields.io/badge/Framework-ESP--IDF%20v6.0.1-orange?logo=esphome&logoColor=white" alt="Framework">
+  <img src="https://img.shields.io/badge/Language-C-A8B9CC?logo=c&logoColor=white" alt="Language">
+  <img src="https://img.shields.io/github/repo-size/Florian-Hagemann/ESP-IDF-ByteRider" alt="Repository Size">
+</p>
+
 ***Note:* This Repository is not finished at the moment.**
 
 I'm rewriting the ByteRider robot projects from the original Arduino code over to native **ESP-IDF** to push my coding skills and learn how FreeRTOS and low-level drivers actually work.
