@@ -10,19 +10,21 @@
 #include "driver/gpio.h"
 
 static const char* TAG = "br_button";
-static QueueHandle_t br_button_queue_handle = NULL;
+static QueueHandle_t br_button_queue_handle = NULL; // Queue for sending button press from ISR to button_handler_task
 
-static uint32_t last_interrupt_time = 0;
+static volatile uint32_t last_interrupt_time = 0; // ! ONLY SUPPORTS THE ONE BUTTON
 
 static void IRAM_ATTR isr_func(void *arg) {
 
     uint32_t interrupt_time = xTaskGetTickCountFromISR();
 
+    // Check if the time between last and current interrupt is greater than 200ms to stop button bouncing
     if(interrupt_time - last_interrupt_time > pdMS_TO_TICKS(200)){
         last_interrupt_time = interrupt_time;
         QueueHandle_t queue = (QueueHandle_t) arg;
         uint32_t dummy = 1;
         xQueueSendFromISR(queue, &dummy, NULL);
+        // ? Maybe replace the queue with a binary semaphore
     }
 
 }
@@ -32,6 +34,7 @@ static void button_handler_task(void *pvArguments) {
     uint32_t dummy;
     button_config_t *config = (button_config_t *)pvArguments;
 
+    // Stop task if there's no callback
     if(config->onpress == NULL) {
 
         ESP_LOGE(TAG, "Button needs a onpress function!");
@@ -44,7 +47,7 @@ static void button_handler_task(void *pvArguments) {
         if(xQueueReceive(br_button_queue_handle, &dummy, portMAX_DELAY) == pdTRUE) {
 
             ESP_LOGD(TAG, "Recieved dummy from isr_func!");
-            config->onpress(config->callback_args);
+            config->onpress(config->callback_args); // See button_config_t struct in br_button.h
 
         }
 
@@ -57,6 +60,7 @@ void br_button_setup(button_config_t *button_config) {
 
     br_button_queue_handle = xQueueCreate(5, sizeof(uint32_t));
 
+    // pull up is required as there is no pull up on PCB. Button pulls BR_PIN_SW low
     gpio_config_t button_gpio_config = {
         .pin_bit_mask = 1ULL << BR_PIN_SW,
         .mode = GPIO_MODE_INPUT,
