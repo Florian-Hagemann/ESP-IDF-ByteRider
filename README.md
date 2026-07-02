@@ -18,7 +18,7 @@ I'm rewriting the ByteRider robot projects from the original Arduino code over t
    git clone https://github.com/Florian-Hagemann/ESP-IDF-ByteRider.git
    cd ESP-IDF-ByteRider
    ```
-**2. Pick a project**
+**2. Pick a project and go into the directory**
 
 **3. Set idf target**
 ```bash
@@ -36,6 +36,13 @@ The **ByteRider** hardware platform was originally designed by [Nils Kohl and La
 * **Original Arduino Repository:** [Florian-Hagemann/ByteRider](https://github.com/Florian-Hagemann/ByteRider)
 
 I'm using their awesome hardware layout and replacing my beginner-friendly Arduino shortcuts with native ESP-IDF code.
+
+### Schematic
+Thanks go out to the **Institute for Microelectronic Systems** and **Prof. Dr.-Ing Holger Blume** for allowing me to add the schematic to the documentation.
+
+![ByteRider Schematic](./hardware/byterider_schematic_picture.png)
+
+You can view the full [ByteRider Hardware Schematic (PDF)](./hardware/byterider_schematic.pdf) here.
 
 ## Prerequisites & Environment
 * **Hardware:** ByteRider Custom PCB (IMS Hannover) + ESP32-C3-DevKitC-02
