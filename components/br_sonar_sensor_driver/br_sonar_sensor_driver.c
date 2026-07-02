@@ -36,6 +36,7 @@ static void IRAM_ATTR isr_func(void *arg) {
 static void sonar_sensor_task(void *pvArguments) {
 
     uint64_t time;
+    const TickType_t xMaxBlockTime = pdMS_TO_TICKS(30);
 
     while(1) {
 
@@ -45,7 +46,7 @@ static void sonar_sensor_task(void *pvArguments) {
 
         gpio_set_level(BR_PIN_TRIG, 0);
 
-        if(xQueueReceive(br_sonar_sensor_queue_handle, &time, portMAX_DELAY) == pdTrue) {
+        if(xQueueReceive(br_sonar_sensor_queue_handle, &time, xMaxBlockTime) == pdTRUE) {
 
             distance = (time * 0.034) / 2; 
             ESP_LOGV(TAG, "Set distance to %f cm", distance);
